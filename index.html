@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A SCHOOL — Scoreboard</title>
+    <title>A SCHOOL — Pro Scoreboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,31 +17,37 @@
                 <img src="girl.png" alt="Mascot" class="header-mascot">
                 <div class="brand">
                     <h1 class="camp-title">A SCHOOL</h1>
-                    <div class="tagline">CAMP SCOREBOARD</div>
+                    <div class="tagline">PROFESSIONAL CAMP SYSTEM</div>
                 </div>
             </div>
             
             <div class="stats-bar">
-                <div class="global-stats">
-                    ОБЩИЙ БАНК: <span id="total-bank">0</span> 💰
-                </div>
-                <button id="add-squad-btn" class="btn-main">➕ Добавить отряд</button>
+                <div class="global-stats">ОБЩИЙ БАНК ЛАГЕРЯ: <span id="total-bank">0</span> 💰</div>
+                <button id="add-squad-btn" class="btn-main">➕ Создать отряд</button>
             </div>
         </div>
     </header>
 
     <main class="container">
+        <!-- Секция общего рейтинга детей -->
+        <section class="leaderboard-section">
+            <h2 class="section-title">🏆 ТОП ЛИЧНОГО ЗАЧЕТА (ALL KIDS)</h2>
+            <div id="kids-leaderboard" class="kids-top-list">
+                <!-- Сюда попадут лучшие дети -->
+            </div>
+        </section>
+
+        <h2 class="section-title">🏕️ ОТРЯДЫ</h2>
         <div id="squads-grid" class="grid">
-            <!-- Карточки загрузятся из Firebase -->
+            <!-- Карточки отрядов загрузятся здесь -->
         </div>
     </main>
 
-    <!-- Подключение Firebase модулей -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ТВОЙ КОНФИГ
+        // ТВОЙ КОНФИГ (ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ)
         const firebaseConfig = {
           apiKey: "AIzaSyB-U3b9FoiHY91_26awhwJnUjxQD8FRThg",
           authDomain: "campdata-8eb5d.firebaseapp.com",
@@ -53,17 +59,14 @@
           measurementId: "G-8QXJTTY35V"
         };
 
-        // Инициализация
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const dbRef = ref(db, 'campData');
+        const dbRef = ref(db, 'campDataPro'); // Новая ветка данных для новой структуры
 
-        // Функции для script.js
         window.saveToCloud = (data) => set(dbRef, data);
         window.onCloudUpdate = (callback) => onValue(dbRef, (snapshot) => callback(snapshot.val()));
     </script>
 
-    <!-- defer гарантирует, что база подключится раньше логики -->
     <script src="script.js" defer></script>
 </body>
 </html>
