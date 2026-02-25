@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A SCHOOL — Scoreboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="header-main">
+                <img src="girl.png" alt="Mascot" class="header-mascot">
+                <div class="brand">
+                    <h1 class="camp-title">A SCHOOL</h1>
+                    <div class="tagline">CAMP SCOREBOARD</div>
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="global-stats">
+                    ОБЩИЙ БАНК: <span id="total-bank">0</span> 💰
+                </div>
+                <button id="add-squad-btn" class="btn-main">➕ Добавить отряд</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="squads-grid" class="grid">
+            <!-- Карточки отрядов будут здесь -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
