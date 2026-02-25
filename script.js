@@ -1,12 +1,14 @@
 let squads = [];
 
-// Слушаем изменения в Firebase
+// Слушаем Firebase
 window.onCloudUpdate((data) => {
     if (data) {
         squads = data;
     } else {
-        // Если база пустая, создаем первый отряд
-        squads = [{ id: Date.now(), name: "Первый Отряд", points: 0, members: [], history: [] }];
+        // Начальные данные (теперь участники — это объекты с баллами)
+        squads = [
+            { id: 1, name: "Альфа", members: [{ id: 101, name: "Иван", points: 0 }] }
+        ];
         save();
     }
     render();
@@ -16,98 +18,128 @@ function save() {
     window.saveToCloud(squads);
 }
 
-window.updatePoints = (id, amount) => {
-    const squad = squads.find(s => s.id === id);
-    if (squad) {
-        squad.points += amount;
-        if (squad.points < 0) squad.points = 0;
-        
-        if (!squad.history) squad.history = [];
-        squad.history.unshift({
-            amount: amount > 0 ? `+${amount}` : amount,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        });
-        if (squad.history.length > 10) squad.history.pop();
-        
-        save(); // Данные улетают в Firebase
-    }
-};
-
-window.addMember = (squadId) => {
-    const name = prompt("Имя участника:");
-    if (name) {
-        const squad = squads.find(s => s.id === squadId);
-        if (!squad.members) squad.members = [];
-        squad.members.push(name);
+// ДОБАВЛЕНИЕ БАЛЛОВ РЕБЕНКУ
+window.changeKidPoints = (squadId, kidId, amount) => {
+    const squad = squads.find(s => s.id === squadId);
+    const kid = squad.members.find(k => k.id === kidId);
+    if (kid) {
+        kid.points += amount;
+        if (kid.points < 0) kid.points = 0;
         save();
     }
 };
 
-window.deleteMember = (squadId, index) => {
-    squads.find(s => s.id === squadId).members.splice(index, 1);
-    save();
-};
-
-window.showHistory = (id) => {
-    const squad = squads.find(s => s.id === id);
-    if (!squad.history || squad.history.length === 0) return alert("История пуста");
-    alert(`История ${squad.name}:\n` + squad.history.map(h => `[${h.time}] ${h.amount}`).join('\n'));
-};
-
-window.editName = (id) => {
-    const squad = squads.find(s => s.id === id);
-    const n = prompt("Новое название отряда:", squad.name);
-    if (n) { squad.name = n; save(); }
-};
-
-document.getElementById('add-squad-btn').onclick = () => {
-    const name = prompt("Название нового отряда:");
+// ДОБАВЛЕНИЕ РЕБЕНКА В ОТРЯД
+window.addKid = (squadId) => {
+    const name = prompt("Имя ребенка:");
     if (name) {
-        squads.push({ id: Date.now(), name, points: 0, members: [], history: [] });
+        const squad = squads.find(s => s.id === squadId);
+        if (!squad.members) squad.members = [];
+        squad.members.push({
+            id: Date.now(),
+            name: name,
+            points: 0
+        });
+        save();
+    }
+};
+
+// УДАЛЕНИЕ РЕБЕНКА
+window.deleteKid = (squadId, kidId) => {
+    if (confirm("Удалить ребенка из списка?")) {
+        const squad = squads.find(s => s.id === squadId);
+        squad.members = squad.members.filter(k => k.id !== kidId);
+        save();
+    }
+};
+
+// УПРАВЛЕНИЕ ОТРЯДАМИ
+document.getElementById('add-squad-btn').onclick = () => {
+    const name = prompt("Название отряда:");
+    if (name) {
+        squads.push({ id: Date.now(), name: name, members: [] });
         save();
     }
 };
 
 window.deleteSquad = (id) => {
-    if (confirm("Удалить этот отряд полностью?")) {
+    if (confirm("Удалить весь отряд?")) {
         squads = squads.filter(s => s.id !== id);
         save();
     }
 };
 
 function render() {
-    squads.sort((a, b) => b.points - a.points);
+    // 1. Считаем Общий Банк и Рейтинг детей
+    let totalBank = 0;
+    let allKids = [];
+
+    squads.forEach(s => {
+        let squadSum = 0;
+        (s.members || []).forEach(k => {
+            squadSum += k.points;
+            allKids.push({ ...k, squadName: s.name });
+        });
+        s.tempTotal = squadSum; // Запоминаем сумму отряда для сортировки
+        totalBank += squadSum;
+    });
+
+    // 2. Сортируем отряды по баллам
+    squads.sort((a, b) => b.tempTotal - a.tempTotal);
+    
+    // 3. Сортируем детей для Зала Славы (ТОП-10)
+    allKids.sort((a, b) => b.points - a.points);
+    const topKids = allKids.slice(0, 10);
+
+    // Отрисовка Банка
+    document.getElementById('total-bank').innerText = totalBank.toLocaleString();
+
+    // Отрисовка Зала Славы
+    const leaderboardEl = document.getElementById('kids-leaderboard');
+    leaderboardEl.innerHTML = topKids.map((k, i) => `
+        <div class="top-kid-card">
+            <span class="top-kid-rank">#${i + 1}</span>
+            <span class="top-kid-name">${k.name}</span>
+            <span class="top-kid-points">${k.points}</span>
+        </div>
+    `).join('') || '<p>Пока здесь пусто...</p>';
+
+    // Отрисовка Отрядов
     const grid = document.getElementById('squads-grid');
     grid.innerHTML = '';
-    let total = 0;
 
     squads.forEach((squad, i) => {
-        total += squad.points;
         const card = document.createElement('div');
         card.className = `squad-card ${i === 0 ? 'top-1' : ''}`;
         card.innerHTML = `
             <div class="rank-badge">${i + 1}</div>
-            <div class="squad-name" onclick="editName(${squad.id})">${squad.name} ✏️</div>
-            <div class="squad-points" id="points-${squad.id}">${squad.points}</div>
-            <div class="score-controls">
-                <button class="btn-score" onclick="updatePoints(${squad.id}, 1)">+1</button>
-                <button class="btn-score" onclick="updatePoints(${squad.id}, 5)">+5</button>
-                <button class="btn-score" onclick="updatePoints(${squad.id}, 10)">+10</button>
-                <button class="btn-score" onclick="updatePoints(${squad.id}, -5)">-5</button>
-            </div>
-            <div style="text-align:center; margin-bottom:10px">
-                <button onclick="showHistory(${squad.id})" style="background:none; border:none; color:var(--accent-purple); cursor:pointer; font-size:0.75rem; text-decoration:underline;">📜 История</button>
-            </div>
+            <h3 class="squad-name">${squad.name}</h3>
+            <span class="squad-total-label">Баллы отряда:</span>
+            <div class="squad-points">${squad.tempTotal}</div>
+
             <div class="members-section">
-                <strong>Состав:</strong>
-                ${(squad.members || []).map((m, mi) => `
-                    <div class="member-item">${m} <span style="cursor:pointer;color:red" onclick="deleteMember(${squad.id}, ${mi})">×</span></div>
-                `).join('')}
-                <button class="btn-add-member" onclick="addMember(${squad.id})">+ Добавить</button>
+                <strong>Дети в отряде:</strong>
+                <div class="members-list" style="margin-top:10px">
+                    ${(squad.members || []).map(k => `
+                        <div class="member-row">
+                            <div class="member-info">
+                                <span class="member-name">${k.name}</span>
+                                <span class="member-score-badge">${k.points}💰</span>
+                            </div>
+                            <div class="member-controls">
+                                <button class="btn-mini" onclick="changeKidPoints(${squad.id}, ${k.id}, 1)">+1</button>
+                                <button class="btn-mini" onclick="changeKidPoints(${squad.id}, ${k.id}, 5)">+5</button>
+                                <button class="btn-mini" onclick="changeKidPoints(${squad.id}, ${k.id}, 10)">+10</button>
+                                <button class="btn-mini" onclick="changeKidPoints(${squad.id}, ${k.id}, -5)">-5</button>
+                                <button class="btn-del-kid" onclick="deleteKid(${squad.id}, ${k.id})">×</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="btn-add-member" onclick="addKid(${squad.id})">+ Добавить ребенка</button>
             </div>
-            <button style="display:block; margin: 10px auto 0; font-size: 0.6rem; border:none; background:none; color:#ccc; cursor:pointer;" onclick="deleteSquad(${squad.id})">Удалить отряд</button>
+            <button style="border:none; background:none; color:#ccc; font-size:0.6rem; cursor:pointer; margin-top:15px; width:100%" onclick="deleteSquad(${squad.id})">удалить отряд</button>
         `;
         grid.appendChild(card);
     });
-    document.getElementById('total-bank').innerText = total;
 }
