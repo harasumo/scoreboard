@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A SCHOOL — Pro Scoreboard</title>
+    <title>A CAMP — Pro Scoreboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,8 @@
             <div class="header-main">
                 <img src="girl.png" alt="Mascot" class="header-mascot">
                 <div class="brand">
-                    <h1 class="camp-title">A SCHOOL</h1>
+                    <!-- ЗАМЕНА ТЕКСТА НА ЛОГОТИП -->
+                    <img src="logo.png" alt="A CAMP" class="camp-logo">
                     <div class="tagline">PROFESSIONAL CAMP SYSTEM</div>
                 </div>
             </div>
@@ -29,21 +30,15 @@
     </header>
 
     <main class="container">
-        <!-- Секция вертикального рейтинга детей -->
         <section class="leaderboard-section">
             <h2 class="section-title">🏆 ТОП ЛИЧНОГО ЗАЧЕТА</h2>
-            <div id="kids-leaderboard" class="kids-top-list">
-                <!-- Сюда попадут лучшие дети вертикальным списком -->
-            </div>
+            <div id="kids-leaderboard" class="kids-top-list"></div>
         </section>
 
         <h2 class="section-title">🏕️ ОТРЯДЫ</h2>
-        <div id="squads-grid" class="grid">
-            <!-- Карточки отрядов загрузятся здесь -->
-        </div>
+        <div id="squads-grid" class="grid"></div>
     </main>
 
-    <!-- Подключение Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
