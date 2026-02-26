@@ -1,5 +1,5 @@
 :root {
-    --bg-color: #0f172a;
+    --bg-color: #1a1a2e;
     --card-bg: #ffffff;
     --accent-green: #2d8a5a;
     --accent-purple: #6d3a8a;
@@ -30,9 +30,22 @@ header {
     text-align: center;
 }
 
-.header-main { display: flex; align-items: center; justify-content: center; gap: 20px; }
-.header-mascot { height: 90px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
-.camp-title { font-family: 'Orbitron'; font-size: 2.5rem; letter-spacing: 2px; }
+.header-main { display: flex; align-items: center; justify-content: center; gap: 30px; }
+
+/* УВЕЛИЧЕННЫЙ РАЗМЕР ДЕВОЧКИ */
+.header-mascot { 
+    height: 140px; 
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); 
+}
+
+/* СТИЛЬ ДЛЯ ЛОГОТИПА */
+.camp-logo {
+    height: 90px;
+    width: auto;
+    filter: drop-shadow(0 3px 10px rgba(0,0,0,0.2));
+}
+
+.tagline { font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; opacity: 0.9; margin-top: 5px; }
 
 .stats-bar {
     display: flex;
@@ -47,11 +60,9 @@ header {
 
 .global-stats { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--gold); }
 .btn-main { background: var(--gold); color: white; border: none; padding: 12px 24px; font-weight: 900; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 0 #b45309; }
-.btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #b45309; }
 
-.section-title { font-family: 'Orbitron'; text-align: center; margin: 40px 0 20px; color: white; letter-spacing: 1px; }
+.section-title { font-family: 'Orbitron'; text-align: center; margin: 40px 0 20px; color: white; }
 
-/* ВЕРТИКАЛЬНЫЙ ЛИДЕРБОРД ДЕТЕЙ */
 .kids-top-list {
     background: rgba(255,255,255,0.05);
     border-radius: 20px;
@@ -73,22 +84,20 @@ header {
     align-items: center;
     justify-content: space-between;
     border-bottom: 4px solid var(--gold);
-    transition: transform 0.2s;
 }
 
 .top-kid-left { display: flex; align-items: center; gap: 15px; }
-.top-kid-rank { font-weight: 900; color: var(--accent-purple); font-family: 'Orbitron'; width: 35px; font-size: 1.2rem; }
+.top-kid-rank { font-weight: 900; color: var(--accent-purple); font-family: 'Orbitron'; width: 35px; }
 .top-kid-name { font-weight: 700; font-size: 1.1rem; display: block; }
-.top-kid-squad { font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 600; }
+.top-kid-squad { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
 .top-kid-points { background: var(--accent-green); color: white; padding: 5px 12px; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; }
 
-/* КАРТОЧКИ ОТРЯДОВ */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
 .squad-card { background: white; color: var(--text-dark); border-radius: 20px; padding: 25px; border-top: 10px solid var(--accent-green); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .squad-card.top-1 { border-top-color: var(--gold); }
 
-.squad-total-label { font-size: 0.8rem; opacity: 0.6; text-align: center; display: block; text-transform: uppercase; font-weight: bold; }
-.squad-points { font-family: 'Orbitron'; font-size: 3.5rem; text-align: center; color: var(--accent-green); margin-bottom: 20px; }
+.squad-total-label { font-size: 0.7rem; opacity: 0.6; text-align: center; display: block; font-weight: bold; }
+.squad-points { font-family: 'Orbitron'; font-size: 3rem; text-align: center; color: var(--accent-green); margin-bottom: 20px; }
 
 .member-row {
     display: flex;
@@ -101,18 +110,31 @@ header {
     border-left: 4px solid var(--accent-purple);
 }
 
-.member-name { font-weight: 700; display: block; font-size: 0.95rem; }
-.member-score-badge { font-family: 'Orbitron'; color: var(--accent-green); font-weight: bold; font-size: 0.9rem; }
+.member-name { font-weight: 700; font-size: 0.95rem; display: block; }
 
-.member-controls { display: flex; gap: 4px; }
+/* КНОПКА РУЧНОГО ИЗМЕНЕНИЯ БАЛЛОВ */
+.btn-edit-score {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Orbitron';
+    color: var(--accent-green);
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+.btn-edit-score:hover { background: #e2e8f0; }
+
+.member-controls { display: flex; gap: 4px; align-items: center; }
 .btn-mini { border: none; background: #cbd5e1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.7rem; }
 .btn-mini:hover { background: var(--accent-green); color: white; }
-.btn-add-kid { width: 100%; padding: 10px; border: 2px dashed var(--accent-purple); background: none; color: var(--accent-purple); font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
-.btn-add-kid:hover { background: var(--accent-purple); color: white; }
 
-.btn-del { background: none; border: none; color: #ef4444; font-size: 1.1rem; cursor: pointer; margin-left: 5px; }
+.btn-add-kid { width: 100%; padding: 10px; border: 2px dashed var(--accent-purple); background: none; color: var(--accent-purple); font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
+.btn-del { background: none; border: none; color: #ef4444; font-size: 1.1rem; cursor: pointer; }
 
 @media (max-width: 600px) {
-    .camp-title { font-size: 1.8rem; }
-    .stats-bar { flex-direction: column; gap: 10px; }
+    .header-main { gap: 10px; }
+    .header-mascot { height: 100px; }
+    .camp-logo { height: 60px; }
 }
