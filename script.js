@@ -14,25 +14,12 @@ function save() {
     window.saveToCloud(squads);
 }
 
-// Кнопки быстрой прибавки (+1, +5)
-window.changeKidPoints = (squadId, kidId, amount) => {
-    const squad = squads.find(s => s.id === squadId);
-    if (squad) {
-        const kid = squad.members.find(k => k.id === kidId);
-        if (kid) {
-            kid.points += amount;
-            if (kid.points < 0) kid.points = 0;
-            save();
-        }
-    }
-};
-
-// РУЧНОЙ ВВОД: СКОЛЬКО БАЛЛОВ ДОБАВИТЬ
+// ФУНКЦИЯ РУЧНОГО НАЧИСЛЕНИЯ БАЛЛОВ
 window.addKidPointsManual = (squadId, kidId) => {
     const squad = squads.find(s => s.id === squadId);
     const kid = squad.members.find(k => k.id === kidId);
     if (kid) {
-        const input = prompt(`Сколько баллов начислить для ${kid.name}?\n(Например: 15 или -10)`);
+        const input = prompt(`Сколько баллов добавить для ${kid.name}?\n(Например: 20 или -15)`);
         if (input !== null && input !== "" && !isNaN(input)) {
             kid.points += parseInt(input);
             if (kid.points < 0) kid.points = 0;
@@ -42,7 +29,7 @@ window.addKidPointsManual = (squadId, kidId) => {
 };
 
 window.addKid = (squadId) => {
-    const name = prompt("Имя ребенка:");
+    const name = prompt("Введите имя ребенка:");
     if (name) {
         const squad = squads.find(s => s.id === squadId);
         if (!squad.members) squad.members = [];
@@ -65,7 +52,7 @@ document.getElementById('add-squad-btn').onclick = () => {
 };
 
 window.deleteSquad = (id) => {
-    if (confirm("Удалить весь отряд?")) { squads = squads.filter(s => s.id !== id); save(); }
+    if (confirm("Удалить отряд?")) { squads = squads.filter(s => s.id !== id); save(); }
 };
 
 window.editSquadName = (id) => {
@@ -126,15 +113,14 @@ function render() {
                             <div class="member-score-display">${k.points} 💰</div>
                         </div>
                         <div class="member-controls">
-                            <button class="btn-manual" onclick="addKidPointsManual(${squad.id}, ${k.id})">+...</button>
-                            <button class="btn-mini" onclick="changeKidPoints(${squad.id}, ${k.id}, 5)">+5</button>
+                            <button class="btn-manual" onclick="addKidPointsManual(${squad.id}, ${k.id})">+ БАЛЛЫ</button>
                             <button class="btn-del" onclick="deleteKid(${squad.id}, ${k.id})">×</button>
                         </div>
                     </div>
                 `).join('')}
-                <button class="btn-add-kid" onclick="addKid(${squad.id})">+ Ребенок</button>
+                <button class="btn-add-kid" onclick="addKid(${squad.id})">+ Добавить ребенка</button>
             </div>
-            <button style="border:none; background:none; color:#94a3b8; font-size:0.6rem; cursor:pointer; margin-top:15px; width:100%; text-decoration:underline" onclick="deleteSquad(${squad.id})">удалить отряд</button>
+            <button style="border:none; background:none; color:#94a3b8; font-size:0.65rem; cursor:pointer; margin-top:20px; width:100%; text-decoration:underline" onclick="deleteSquad(${squad.id})">удалить отряд</button>
         `;
         grid.appendChild(card);
     });
